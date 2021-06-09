@@ -70,10 +70,4 @@ public class Trie {
         }
     }
 
-    // 将 sensi_words.txt 的敏感词添加到 Trie 中
-    public void init() {
-
-    }
-
-
 }
