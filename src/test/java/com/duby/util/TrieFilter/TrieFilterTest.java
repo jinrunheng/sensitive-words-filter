@@ -8,7 +8,7 @@ class TrieFilterTest {
     public void testTrieFilterInitMethod() {
         TrieFilter trieFilter = new TrieFilter();
         Assertions.assertFalse(trieFilter.getTrie().exist("性爱电影"));
-        trieFilter.init();
+        trieFilter.initDefaultData();
         Assertions.assertTrue(trieFilter.getTrie().exist("性爱电影"));
     }
 
@@ -39,6 +39,18 @@ class TrieFilterTest {
         String sentence = "xwabfabcfaf";
         String filteredSentence = trieFilter.filter(sentence, '*');
         Assertions.assertEquals(filteredSentence,"xwa********");
+    }
+
+    @Test
+    public void testFilter(){
+        TrieFilter trieFilter = new TrieFilter();
+        trieFilter.initDefaultData();
+        // System.out.println(trieFilter.getTrie().getRoot().isEnd());
+        // 的的的的的的的的的的
+        String sentence = "的的的的的的的的的的";
+
+        String filteredSentence = trieFilter.filter(sentence,'*');
+        System.out.println(filteredSentence);
     }
 
     @Test

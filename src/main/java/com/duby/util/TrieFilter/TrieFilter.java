@@ -5,6 +5,7 @@ import com.duby.util.FileReader;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Objects;
 
 public class TrieFilter {
 
@@ -21,7 +22,7 @@ public class TrieFilter {
     /**
      * 将 sensi_words.txt 文件中的敏感词添加到 Trie中完成初始化
      */
-    public void init() {
+    public void initDefaultData() {
         batchAdd("sensi_words.txt");
     }
 
@@ -64,7 +65,7 @@ public class TrieFilter {
         if (start < 0 || end >= chars.length) {
             throw new ArrayIndexOutOfBoundsException();
         }
-        if (start >= end) {
+        if (start > end) {
             throw new RuntimeException("Invalid Operation");
         }
         for (int i = start; i <= end; i++) {
@@ -74,37 +75,59 @@ public class TrieFilter {
 
     /**
      * @param sentence 需要过滤的句子
-     * @param r  敏感词替换字符
+     * @param r        敏感词替换字符
      * @return 过滤后的句子
      * <p>
      * p1,p2 指针指向 sentence
      * TrieNode node 指向 Trie
      * <p>
      * case1:
-     * p2 指向的当前字符不在敏感词库中，并且 node 指向 root ，则 p1,p2 一起向后移动
+     * p2 指向的当前字符不在敏感词库中，node.isEnd == false，并且 node 指向 root ，则 p1,p2 一起向后移动
+     * p2 指向的当前字符不在敏感词库中，node.isEnd == false，并且 node 不指向 root，则 p1 移动一个单位，p2 指向 p1，node 指向 root
+     * p2 指向的当前字符不再敏感词库中，node.isEnd == true，则将 p1~p2-1 之间的字符用 r 替换，然后 p1 指向 p2，node 指向 root
      * case2:
-     * p2 指向的当前字符在敏感词库中，并且 node.isEnd == false ，并且 p2 并没有指向最后一个字符，则 node,p2 一起移动；
-     * 如果 node.isEnd == true 则将 p1~p2-1 之间的字符用 replace 替换，然后 p1 指向 p2，node 指向 root
-     * 如果 p2 已经指向最后一个字符，则只移动 node,并判断移动后的 node.isEnd == true ，如果为 true 则将 p1~p2 之间的字符用 replace 替换
-     * case3:
-     * p2 指向的当前字符不在敏感词库中，并且 node 不指向 root，则 p1 移动一个单位，p2 指向 p1，node 指向 root
+     * p2 指向的当前字符在敏感词库中，p2 并没有指向最后一个字符，并且 node.isEnd == false，则 node,p2 一起移动
+     * p2 指向的当前字符在敏感词库中，p2 并没有指向最后一个字符，并且 node.isEnd == true， 则将 p1~p2-1 之间的字符用 r 替换，然后 p1 指向 p2，node 指向 root
+     * p2 指向的当前字符在敏感词库中，p2 已经指向最后一个字符，node 向后移动一位后，判断 node.isEnd ，如果为 true 则将 p1~p2 之间的字符用 r 替换，然后执行 p2++ 跳出循环；否则直接执行 p2++ 跳出循环
+     *
      *
      * <p>
      */
     public String filter(String sentence, char r) {
+        if (Objects.isNull(sentence)) {
+            return null;
+        }
         char[] chars = sentence.toCharArray();
         int p1 = 0;
         int p2 = 0;
         TrieNode node = trie.getRoot();
+        if (chars.length == 1) {
+            if (node.getNextNodes().containsKey(chars[0])) {
+                node = node.getNextNodes().get(chars[0]);
+                if (node.isEnd()) {
+                    return String.valueOf(r);
+                }
+                return sentence;
+            } else {
+                return sentence;
+            }
+        }
         while (p2 < chars.length) {
             if (node.getNextNodes().containsKey(chars[p2]) && p2 != chars.length - 1) {
                 if (!node.isEnd()) {
                     node = node.getNextNodes().get(chars[p2]);
                     p2++;
                 } else {
-                    replace(chars, r, p1, p2 - 1);
-                    p1 = p2;
-                    node = trie.getRoot();
+                    if (p1 == p2) {
+                        replace(chars, r, p1, p2);
+                        p1++;
+                        p2++;
+                        node = trie.getRoot();
+                    } else {
+                        replace(chars, r, p1, p2 - 1);
+                        p1 = p2;
+                        node = trie.getRoot();
+                    }
                 }
 
             } else if (node.getNextNodes().containsKey(chars[p2]) && p2 == chars.length - 1) {
@@ -114,22 +137,29 @@ public class TrieFilter {
                 }
                 p2++;
             } else {
-                if(node.isEnd()){
-                    replace(chars, r, p1, p2 - 1);
-                    p1 = p2;
-                    node = trie.getRoot();
-                }
-                if (node == trie.getRoot()) {
-                    p1++;
-                    p2++;
+                if (node.isEnd()) {
+                    if (p1 == p2) {
+                        replace(chars, r, p1, p2);
+                        p1++;
+                        p2++;
+                        node = trie.getRoot();
+                    } else {
+                        replace(chars, r, p1, p2 - 1);
+                        p1 = p2;
+                        node = trie.getRoot();
+                    }
                 } else {
-                    p1++;
-                    p2 = p1;
-                    node = trie.getRoot();
+                    if (node == trie.getRoot()) {
+                        p1++;
+                        p2++;
+                    } else {
+                        p1++;
+                        p2 = p1;
+                        node = trie.getRoot();
+                    }
                 }
             }
         }
-
         return String.valueOf(chars);
     }
 

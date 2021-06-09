@@ -6,6 +6,7 @@ import java.util.Map;
 public class TrieNode {
     private Map<Character, TrieNode> nextNodes;
     private boolean isEnd;
+    private int path;
 
     public int getPath() {
         return path;
@@ -15,7 +16,7 @@ public class TrieNode {
         this.path = path;
     }
 
-    private int path;
+
 
     public TrieNode() {
         nextNodes = new HashMap<>();

@@ -18,10 +18,10 @@ public class Trie {
      * 将敏感词添加到 Trie 中
      */
     public void put(String word) {
-        if (Objects.isNull(word)) {
+        if (Objects.isNull(word) || word.length() == 0) {
             return;
         }
-        if(!exist(word)){
+        if (!exist(word)) {
             char[] chars = word.toCharArray();
             TrieNode node = root;
             for (int i = 0; i < chars.length; i++) {
@@ -40,7 +40,7 @@ public class Trie {
      * 查询在 Trie 当中是否存在某个敏感词
      */
     public boolean exist(String word) {
-        if (Objects.isNull(word)) {
+        if (Objects.isNull(word) || word.length() == 0) {
             return false;
         }
         char[] chars = word.toCharArray();
@@ -51,7 +51,7 @@ public class Trie {
                 return false;
             }
             node = nextNodes.get(chars[i]);
-            if(node.getPath() == 0){
+            if (node.getPath() == 0) {
                 return false;
             }
         }
