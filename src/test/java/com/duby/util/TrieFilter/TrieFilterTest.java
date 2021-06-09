@@ -2,15 +2,10 @@ package com.duby.util.TrieFilter;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import sun.jvm.hotspot.utilities.Assert;
 
 class TrieFilterTest {
-    @Test
-    public void testTrieFilterInitMethod() {
-        TrieFilter trieFilter = new TrieFilter();
-        Assertions.assertFalse(trieFilter.getTrie().exist("性爱电影"));
-        trieFilter.initDefaultData();
-        Assertions.assertTrue(trieFilter.getTrie().exist("性爱电影"));
-    }
+
 
     @Test
     public void testTrieFilterBatchAddMethod() {
@@ -18,6 +13,14 @@ class TrieFilterTest {
         Assertions.assertFalse(trieFilter.exist("测试敏感词1"));
         trieFilter.batchAdd("test.txt");
         Assertions.assertTrue(trieFilter.exist("测试敏感词1"));
+    }
+
+    @Test
+    public void testInitDefaultDataMethod() {
+        TrieFilter trieFilter = new TrieFilter();
+        trieFilter.initDefaultData();
+        Assertions.assertTrue(trieFilter.exist("学chao"));
+        Assertions.assertTrue(trieFilter.exist("迷藥"));
     }
 
     @Test
@@ -38,25 +41,6 @@ class TrieFilterTest {
         trieFilter.put("faf");
         String sentence = "xwabfabcfaf";
         String filteredSentence = trieFilter.filter(sentence, '*');
-        Assertions.assertEquals(filteredSentence,"xwa********");
-    }
-
-    @Test
-    public void testFilter(){
-        TrieFilter trieFilter = new TrieFilter();
-        trieFilter.initDefaultData();
-        // System.out.println(trieFilter.getTrie().getRoot().isEnd());
-        // 的的的的的的的的的的
-        String sentence = "的的的的的的的的的的";
-
-        String filteredSentence = trieFilter.filter(sentence,'*');
-        System.out.println(filteredSentence);
-    }
-
-    @Test
-    public void test(){
-        TrieFilter trieFilter = new TrieFilter();
-        trieFilter.put("abc");
-        TrieNode a = trieFilter.getTrie().getRoot().getNextNodes().get('a');
+        Assertions.assertEquals(filteredSentence, "xwa********");
     }
 }

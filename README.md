@@ -1,9 +1,9 @@
 # sensitive-words-filter
-This is a Chinese sensitive words filter implemented in Java
+This is a sensitive words filter implemented in Java
 
 ### 敏感词库
 
-默认敏感词库拷贝自：https://github.com/observerss/textfilter
+默认敏感词库拷贝自：https://github.com/lyy720301/Sensitive-word
 
 项目参考：https://github.com/elulis/sensitive-words
 
