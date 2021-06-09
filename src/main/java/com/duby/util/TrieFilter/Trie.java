@@ -6,6 +6,10 @@ import java.util.Objects;
 public class Trie {
     private TrieNode root;
 
+    public TrieNode getRoot() {
+        return root;
+    }
+
     public Trie() {
         root = new TrieNode();
     }
