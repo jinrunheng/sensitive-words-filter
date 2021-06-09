@@ -6,7 +6,12 @@
     <groupId>com.duby.util</groupId>
     <artifactId>sensitive-words-filter</artifactId>
     <version>0.0.1</version>
-
+    <name>sensitive-words-filter</name>
+    <description>This is a Chinese sensitive words filter implemented in Java</description>
+    <properties>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+    </properties>
     <dependencies>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
