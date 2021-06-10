@@ -6,17 +6,23 @@
 
 敏感词库拷贝自：https://github.com/lyy720301/Sensitive-word
 
+### Maven
 
-
-
+```xml
+<dependency>
+  <groupId>io.github.jinrunheng</groupId>
+  <artifactId>sensitive-words-filter</artifactId>
+  <version>0.0.1</version>
+</dependency>
+```
 
 ### 项目原理
 
 前缀树(Trie)
 
-![trie](https://github.com/jinrunheng/my-img/blob/main/img/trie.png)
+<img src="https://tva1.sinaimg.cn/large/008i3skNgy1grdmrcw21uj31k60u01kx.jpg" alt="image-20210611002057898" style="zoom:67%;" align="left"/>
 
-### 用法
+### 使用
 
 #### 初始化
 
