@@ -1,10 +1,10 @@
 package com.duby.util.TrieFilter;
 
 import com.duby.util.FileReader;
+import org.apache.commons.lang3.CharUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Objects;
 
 public class TrieFilter {
@@ -22,7 +22,7 @@ public class TrieFilter {
     /**
      * 将 sensi_words.txt 文件中的敏感词添加到 Trie中完成初始化
      */
-    public void initDefaultData() {
+    private void initDefaultData() {
         batchAdd("sensi_words.txt");
     }
 
@@ -74,6 +74,13 @@ public class TrieFilter {
     }
 
     /**
+     * 判断是否为符号
+     */
+    private boolean isSymbol(Character c) {
+        return !CharUtils.isAsciiAlphanumeric(c) && (c < 0X2E80 || c > 0x9FFF);
+    }
+
+    /**
      * @param sentence 需要过滤的句子
      * @param r        敏感词替换字符
      * @return 过滤后的句子
@@ -89,7 +96,13 @@ public class TrieFilter {
      * p2 指向的当前字符在敏感词库中，p2 并没有指向最后一个字符，并且 node.isEnd == false，则 node,p2 一起移动
      * p2 指向的当前字符在敏感词库中，p2 并没有指向最后一个字符，并且 node.isEnd == true， 则将 p1~p2-1 之间的字符用 r 替换，然后 p1 指向 p2，node 指向 root
      * p2 指向的当前字符在敏感词库中，p2 已经指向最后一个字符，node 向后移动一位后，判断 node.isEnd ，如果为 true 则将 p1~p2 之间的字符用 r 替换，然后执行 p2++ 跳出循环；否则直接执行 p2++ 跳出循环
-     *
+     * <p>
+     * 对敏感词中加入符号的处理：
+     * 如：有敏感词 abc
+     * 对文本 ※a※b※c
+     * 遇到符号，p2 并没有指向最后一个字符，并且 node 指向 root，则 p1++,p2++
+     * 遇到符号，p2 并没有指向最后一个字符，并且 node 没有指向 root，则 p2++
+     * 遇到符号，p2 指向最后一个字符，并且 node 没有指向 root，则将 p1~p2-1 之间的字符用 r 替换,并跳出循环
      *
      * <p>
      */
@@ -101,18 +114,32 @@ public class TrieFilter {
         int p1 = 0;
         int p2 = 0;
         TrieNode node = trie.getRoot();
-        if (chars.length == 1) {
-            if (node.getNextNodes().containsKey(chars[0])) {
-                node = node.getNextNodes().get(chars[0]);
-                if (node.isEnd()) {
-                    return String.valueOf(r);
-                }
-                return sentence;
-            } else {
-                return sentence;
-            }
-        }
         while (p2 < chars.length) {
+            if (isSymbol(chars[p2]) && p2 != chars.length - 1) {
+                if (node == trie.getRoot()) {
+                    p1++;
+                    p2++;
+                    if (p2 >= chars.length) {
+                        break;
+                    }
+                } else {
+                    p2++;
+                    if (p2 >= chars.length) {
+                        break;
+                    }
+                    continue;
+                }
+            }
+            if (isSymbol(chars[p2]) && p2 == chars.length - 1) {
+                if (node != trie.getRoot()) {
+                    if (p1 == p2) {
+                        replace(chars, r, p1, p2);
+                    } else {
+                        replace(chars, r, p1, p2 - 1);
+                    }
+                    break;
+                }
+            }
             if (node.getNextNodes().containsKey(chars[p2]) && p2 != chars.length - 1) {
                 if (!node.isEnd()) {
                     node = node.getNextNodes().get(chars[p2]);
