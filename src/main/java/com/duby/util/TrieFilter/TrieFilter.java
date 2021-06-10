@@ -19,12 +19,6 @@ public class TrieFilter {
         return trie;
     }
 
-    /**
-     * 将 sensi_words.txt 文件中的敏感词添加到 Trie中完成初始化
-     */
-    private void initDefaultData() {
-        batchAdd("sensi_words.txt");
-    }
 
     /**
      * 增加一个敏感词
@@ -61,7 +55,7 @@ public class TrieFilter {
         }
     }
 
-    public void replace(char[] chars, char r, int start, int end) {
+    protected void replace(char[] chars, char r, int start, int end) {
         if (start < 0 || end >= chars.length) {
             throw new ArrayIndexOutOfBoundsException();
         }

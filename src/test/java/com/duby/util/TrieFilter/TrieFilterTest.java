@@ -1,15 +1,19 @@
 package com.duby.util.TrieFilter;
 
-import com.duby.util.FileReader;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.util.Random;
-
 class TrieFilterTest {
 
+    @Test
+    public void testTrieFilterBasicMethod(){
+        TrieFilter trieFilter = new TrieFilter();
+        Assertions.assertFalse(trieFilter.exist("test"));
+        trieFilter.put("test");
+        Assertions.assertTrue(trieFilter.exist("test"));
+        trieFilter.remove("test");
+        Assertions.assertFalse(trieFilter.exist("test"));
+    }
 
     @Test
     public void testTrieFilterBatchAddMethod() {
@@ -42,7 +46,10 @@ class TrieFilterTest {
      * 强奸
      * 强奸妇女
      * 文字为：强奸妇女哈哈哈
+     *
      * 那么该过滤器的过滤结果为：**妇女哈哈哈
+     * 而不是 ****哈哈哈
+     * 这也是该项目的改进点之一
      */
 //    @Test
 //    public void complexTest() {
@@ -106,8 +113,8 @@ class TrieFilterTest {
     public void testSentenceWithSymbol() {
         TrieFilter trieFilter = new TrieFilter();
         trieFilter.put("abcabc");
-        String sentence = "^a^^^b/c&ab&&c";
+        String sentence = "^a^^^b/c&ab&&c^";
         String filteredSentence = trieFilter.filter(sentence, '*');
-        Assertions.assertEquals(filteredSentence, "^*************");
+        Assertions.assertEquals(filteredSentence, "^*************^");
     }
 }
