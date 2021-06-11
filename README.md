@@ -1,6 +1,6 @@
 # sensitive-words-filter
 
-这是一个使用 Java 语言编写的一个敏感词过滤器
+这是一个使用 Java 语言编写的敏感词过滤器
 
 ### 敏感词库
 
